@@ -13,4 +13,5 @@ HTML5
 CSS3  
 JavaScript (Fetch API, DOM)
 
-
+Clone:
+https://github.com/yanp836/Pokedex.git

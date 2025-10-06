@@ -39,6 +39,7 @@ header {
 .buscar input {
     padding: 5px;
     border: none;
+    font-size: 20px;
 }
 
 .buscar label {
@@ -123,6 +124,9 @@ header {
 .type span {
     font-weight: bold;
     color: rgb(46, 44, 44);
+    background-color: rgba(119, 119, 119, 0.295);
+    padding: 5px;
+    border-radius: 15px;
 }
 
 #mostrarCards {
@@ -136,4 +140,11 @@ header {
     transform: scale(1.05);
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
     cursor: pointer;
+}
+
+#filtroTipo{
+    background-color: rgb(255, 255, 255);
+    border: none;
+    padding: 5px;
+    font-size: 20px;
 }

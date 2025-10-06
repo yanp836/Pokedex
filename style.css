@@ -1,0 +1,126 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+body {
+    background: linear-gradient(to right, #d4d3dd, #f4ffc4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+}
+
+
+header > img {  
+    width: 250px;
+    height: 200px;
+    margin-top: 30px;
+}
+
+header{
+    background-color: #f4ffc4;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.buscar{
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.buscar input{
+    padding: 5px;
+    border: none;
+}
+
+.buscar label{
+    font-size: 20px;
+    font-family: sans-serif;
+}
+
+.buscar button{
+    background-color: rgb(255, 255, 255);
+    border: none;
+    padding: 5px;
+    font-size: 20px;
+}
+
+.buscar button:hover{
+    background-color: rgb(231, 231, 231);
+    border: none;
+    padding: 5px;
+    font-size: 20px;
+    animation: 0.3ms;
+}
+
+.pokeContainer{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+.pokemon {
+    background-color: #f4ffc4;
+    border-radius: 15px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    margin: 10px;
+    padding: 20px;
+    text-align: center;
+    width: 180px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pokemon:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+
+
+.imgContainer {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.imgContainer img {
+    max-width: 90%;
+}
+
+.info {
+    margin-top: 15px;
+}
+
+.number {
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+}
+
+.name {
+    margin: 10px 0 5px;
+    letter-spacing: 1px;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.type span {
+    font-weight: bold;
+    color: rgb(46, 44, 44);
+}

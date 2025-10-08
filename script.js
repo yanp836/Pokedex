@@ -46,7 +46,7 @@ const createCards = (pokemon) => {
     const card = document.createElement('div');
     card.classList.add("pokemon");
     card.dataset.name = pokemon.name.toLowerCase(); // marcador para busca
-    card.dataset.type = pokemon.type;
+    card.dataset.types = pokemon.types.map(t => t.type.name).join(","); // adiciona todos os tipos
     cardsDOM.push(card);
 
     const name = pokemon.name[0].toUpperCase() + pokemon.name.slice(1);
@@ -64,7 +64,7 @@ const createCards = (pokemon) => {
         <div class="info">
             <span class="number">#${id}</span>
             <h3 class="name">${name}</h3>
-            <small class="type">Type: <span>${type}</span></small>
+            <small class="type">Type: <span>${pokeTypes.join(', ')}</span></small>
         </div>
     `;
 
@@ -95,7 +95,7 @@ function verifyPokemon() {
     }
 
     if (!encontrou) {
-        alert(`Pokemon "${pokemonABuscar}" não foi encontrado.`);
+        alert(`Pokémon "${pokemonABuscar}" não foi encontrado.`);
     }
 }
 
@@ -123,17 +123,21 @@ function mostraTodosPokemons() {
     if (botao) botao.remove();
 }
 
-
-function filtrarPorTipo(){
+// Filtra pokémons por tipo
+function filtrarPorTipo() {
     const tipoSelecionado = document.getElementById("filtroTipo").value;
+
     cardsDOM.forEach(card => {
-        if (tipoSelecionado === "todos" || card.dataset.type === tipoSelecionado) {
+        const tipos = card.dataset.types.split(",");
+        if (tipoSelecionado === "todos" || tipos.includes(tipoSelecionado)) {
             card.style.display = "block"; // mostra o card
         } else {
             card.style.display = "none"; // esconde o card
         }
     });
 }
+
 // Inicia a criação dos cards
 makeCardsPokemon();
+
 

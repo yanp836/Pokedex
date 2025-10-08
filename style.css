@@ -137,3 +137,11 @@ header {
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
     cursor: pointer;
 }
+
+#filtroTipo {
+    background-color: rgb(255, 255, 255);
+    border: none;
+    padding: 5px;
+    font-size: 20px;
+    animation: 0.3ms;
+}

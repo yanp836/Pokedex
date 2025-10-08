@@ -1,7 +1,7 @@
 const pokeContainer = document.querySelector("#pokeContainer");
 const qttPokemon = 1025;
-let listaPokemon = []; // lista de objetos completos dos Pokémons
-let cardsDOM = [];     // lista dos elementos DOM dos cards
+let listaPokemon = [];
+let cardsDOM = [];
 
 const colorByType = {
     fire: '#FDDFDF',
@@ -22,17 +22,13 @@ const colorByType = {
 
 const mainTypes = Object.keys(colorByType);
 
-// Cria todos os cards dos Pokémons
 const makeCardsPokemon = async () => {
     for (let i = 1; i <= qttPokemon; i++) {
         await getPokemons(i);
     }
-
-    // Ordena a lista pelo nome para que a busca binária funcione
     listaPokemon.sort((a, b) => a.name.localeCompare(b.name));
 };
 
-// Busca Pokémon na API e cria o card
 const getPokemons = async (id) => {
     const url = `https://pokeapi.co/api/v2/pokemon/${id}`;
     const resp = await fetch(url);
@@ -41,12 +37,11 @@ const getPokemons = async (id) => {
     createCards(data);
 };
 
-// Cria o card no DOM e marca com dataset
 const createCards = (pokemon) => {
     const card = document.createElement('div');
     card.classList.add("pokemon");
-    card.dataset.name = pokemon.name.toLowerCase(); // marcador para busca
-    card.dataset.types = pokemon.types.map(t => t.type.name).join(","); // adiciona todos os tipos
+    card.dataset.name = pokemon.name.toLowerCase();
+    card.dataset.types = pokemon.types.map(t => t.type.name).join(",");
     cardsDOM.push(card);
 
     const name = pokemon.name[0].toUpperCase() + pokemon.name.slice(1);
@@ -69,12 +64,11 @@ const createCards = (pokemon) => {
     `;
 
     pokeContainer.appendChild(card);
+    card.addEventListener("click", () => mostrarDetalhesPokemon(pokemon));
 };
 
-// Busca binária e mostra apenas o Pokémon encontrado
 function verifyPokemon() {
     const pokemonABuscar = document.getElementById("buscar").value.toLowerCase();
-
     let ponteiroMenor = 0;
     let ponteiroMaior = listaPokemon.length - 1;
     let encontrou = false;
@@ -99,14 +93,11 @@ function verifyPokemon() {
     }
 }
 
-// Mostra apenas o card do Pokémon encontrado
 function mostraPokemonEncontrado(nome) {
-    // Esconde todos os cards e mostra apenas o encontrado
     cardsDOM.forEach(card => {
         card.style.display = (card.dataset.name === nome.toLowerCase()) ? "block" : "none";
     });
 
-    // Adiciona o botão "Mostrar todos" se não existir
     if (!document.querySelector("#mostrarCards")) {
         const botaoTodos = document.createElement("button");
         botaoTodos.textContent = "Mostrar todos";
@@ -116,28 +107,84 @@ function mostraPokemonEncontrado(nome) {
     }
 }
 
-// Mostra todos os cards novamente
 function mostraTodosPokemons() {
     cardsDOM.forEach(card => card.style.display = "block");
     const botao = document.querySelector("#mostrarCards");
     if (botao) botao.remove();
 }
 
-// Filtra pokémons por tipo
 function filtrarPorTipo() {
     const tipoSelecionado = document.getElementById("filtroTipo").value;
-
     cardsDOM.forEach(card => {
         const tipos = card.dataset.types.split(",");
-        if (tipoSelecionado === "todos" || tipos.includes(tipoSelecionado)) {
-            card.style.display = "block"; // mostra o card
-        } else {
-            card.style.display = "none"; // esconde o card
-        }
+        card.style.display = (tipoSelecionado === "todos" || tipos.includes(tipoSelecionado)) ? "block" : "none";
     });
 }
 
-// Inicia a criação dos cards
+async function mostrarDetalhesPokemon(pokemon) {
+    // Remove modal antigo
+    const antigoModal = document.querySelector(".modal");
+    if (antigoModal) antigoModal.remove();
+
+    const evolucoes = await buscarEvolucoes(pokemon);
+    const nome = pokemon.name[0].toUpperCase() + pokemon.name.slice(1);
+    const tipos = pokemon.types.map(t => t.type.name).join(", ");
+    const habilidades = pokemon.abilities.map(a => a.ability.name).join(", ");
+    const peso = pokemon.weight / 10;
+    const altura = pokemon.height / 10;
+
+    const modal = document.createElement("div");
+    modal.classList.add("modal");
+
+    // HTML das evoluções
+    const evolucoesHTML = evolucoes.map(nomeEvo => {
+        const poke = listaPokemon.find(p => p.name === nomeEvo);
+        const idEvo = poke ? poke.id : "";
+        return `
+            <div class="evolucao">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${idEvo}.png" alt="${nomeEvo}">
+                <p>${nomeEvo[0].toUpperCase() + nomeEvo.slice(1)}</p>
+            </div>
+        `;
+    }).join("");
+
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="fechar">&times;</span>
+            <h2>${nome} (#${pokemon.id})</h2>
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png" alt="${nome}">
+            <p><strong>Tipo:</strong> ${tipos}</p>
+            <p><strong>Altura:</strong> ${altura} m</p>
+            <p><strong>Peso:</strong> ${peso} kg</p>
+            <p><strong>Habilidades:</strong> ${habilidades}</p>
+
+            <h3>Evoluções</h3>
+            <div class="evolucoes-container">${evolucoesHTML}</div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Fecha modal
+    modal.querySelector(".fechar").addEventListener("click", () => modal.remove());
+}
+
+function coletarEvolucoes(chain, lista = []) {
+    if (!chain) return lista;
+    lista.push(chain.species.name);
+    chain.evolves_to.forEach(evo => coletarEvolucoes(evo, lista));
+    return lista;
+}
+
+async function buscarEvolucoes(pokemon) {
+    const especieURL = `https://pokeapi.co/api/v2/pokemon-species/${pokemon.id}/`;
+    const especieResp = await fetch(especieURL);
+    const especieData = await especieResp.json();
+
+    const evoResp = await fetch(especieData.evolution_chain.url);
+    const evoData = await evoResp.json();
+
+    return coletarEvolucoes(evoData.chain);
+}
+
 makeCardsPokemon();
-
-
